@@ -1,5 +1,12 @@
 # Clairvoyant
 
+## SUPER ALPHA
+
+This is not meant to be used for anything serious at this point. It will at least give you a skeleton for your
+code but not much beyond that at this point. You've been warned.
+
+## What is it?
+
 Divine what code should be written to make a suite of tests pass.
 
 Test code is extremely close to actual code, and a lot of inferences can be made about the nature of the code that would be generated in order to fulfil the tests.
@@ -15,7 +22,7 @@ describe Person do
   describe '#name' do
     expect(person.name).to eq('brandon')
   end
-  
+
   describe '#age' do
     expect(person.age).to eq(23)
   end
@@ -36,7 +43,7 @@ end
 ```ruby
 class Person
   attr_accessor :name, :age
-  
+
   def initialize(name, age)
     @name = name
     @age  = age
