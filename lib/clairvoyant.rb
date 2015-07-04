@@ -1,44 +1,11 @@
 require "clairvoyant/version"
 
+require 'clairvoyant/indentable'
+
+require 'clairvoyant/builder'
+require 'clairvoyant/method'
+
 module Clairvoyant
-  class Builder
-    def initialize(klass_name:, indent_size: 2)
-      @klass_name    = klass_name
-      @indent_size   = indent_size
-      @klass_methods = []
-    end
-
-    def indent(times = 1)
-      ' ' * (@indent_size * times)
-    end
-
-    def klass
-      -> method_string {
-        "class #{@klass_name}\n" << method_string << "end"
-      }
-    end
-
-    def inject_method(name)
-      @klass_methods << name[1..-1]
-    end
-
-    def compose_klass
-      klass.call @klass_methods.reduce('') { |method_string, method|
-        method_string <<
-          "\n" <<
-          "#{indent(1)}def #{method}\n" <<
-            "#{indent(2)}# Code goes here eventually\n" <<
-          "#{indent(1)}end" <<
-          "\n\n"
-      }
-    end
-
-    def save_as(path)
-      File.open(path, 'w') { |file| file << compose_klass }
-    end
-  end
-
-
   class << self
     # RSPEC describe parser
     #
@@ -46,29 +13,33 @@ module Clairvoyant
     #
     # @return [type] [description]
     def describe(description, &block)
-      @builder.inject_method(description) if description[0] == '#'
+      @builder.klass_name ||= description if description.is_a?(Symbol)
+      @builder.add_method(description)    if description[0] == '#'
       block.call rescue nil
     end
 
+    # Catch missing constants so we don't hav obscure rescues throughout the
+    # code
+    #
+    # @param name [Symbol] - Name of the undefined constant that was caught
+    #
+    # @return [Symbol]
+    def const_missing(name)
+      name
+    end
+
+    # Parses a file into a builder
+    #
+    # @param file_name [String] - Path to the file
+    #
+    # @return [Clairvoyant::Builder]
     def grok(file_name)
-      file  = File.open(file_name, 'r')
-      klass = ''
+      cleaned_lines =
+        File
+          .open(file_name, 'r')
+          .drop_while { |line| !line.include?('describe') }.join("\n")
 
-      # Look for the first describe and start there, so we get rid of
-      # helpers and includes.
-      cleaned_lines = file.drop_while { |line|
-        !line.include?('describe')
-      }.tap { |lines|
-        # Yank constants out of the first line - better suggestions welcome
-        begin
-          self.class_eval "#{lines[0]}end"
-        rescue NameError => e
-          klass    = /constant Clairvoyant::(?<klass>.+)$/.match(e.message)[:klass]
-          lines[0] = "describe '#{klass}' do"
-        end
-      }.join("\n")
-
-      @builder = Clairvoyant::Builder.new(klass_name: klass)
+      @builder = Clairvoyant::Builder.new
 
       self.class_eval cleaned_lines
 

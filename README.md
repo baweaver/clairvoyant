@@ -5,7 +5,7 @@
 This is not meant to be used for anything serious at this point. It will at least give you a skeleton for your
 code but not much beyond that at this point. You've been warned.
 
-## What is it?
+## What is it? (Theoretical)
 
 Divine what code should be written to make a suite of tests pass.
 
@@ -53,24 +53,16 @@ end
 
 This is merely an abstract and requires a lot of work though.
 
-
-## Installation
-
-Add this line to your application's Gemfile:
-
-    gem 'clairvoyant'
-
-And then execute:
-
-    $ bundle
-
-Or install it yourself as:
-
-    $ gem install clairvoyant
-
 ## Usage
 
-TODO: Write usage instructions here
+Currently it will only work with very basic RSPEC files. This will be tested against later.
+
+```ruby
+builder = Clairvoyant.grok('path/to/rspec/file.rb')
+
+# And there's your class!
+puts builder
+```
 
 ## Contributing
 
