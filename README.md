@@ -3,7 +3,7 @@
 ## SUPER ALPHA
 
 This is not meant to be used for anything serious at this point. It will at least give you a skeleton for your
-code but not much beyond that at this point. You've been warned.
+code but not much beyond that at this point. You've been warned. [Read more](http://baweaver.com/blog/2015/07/04/the-clairvoyant-project/)
 
 ## What is it? (Theoretical)
 
